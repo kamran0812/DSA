@@ -1,0 +1,69 @@
+#include<bits/stdc++.h>
+using namespace std;
+//Longest proper Prefix which is also  proper Suffix
+vector<int> LPS(string &s) {
+	vector<int> lps(s.size(), 0);
+	int len = 0, i = 1; //len always points to Last prefix
+	//abcabc
+	//(abc)<-len (abc)<-i
+
+	while (i < s.size()) {
+		if (s[i] == s[len]) { //if both prefix+1 and suffix +1 elemets are equal then increament len by 1
+			len++;
+			lps[i] = len;
+			i++;
+		} else {
+			if (len > 0) {
+				len = lps[len - 1];  //check in previous prefix lengths
+			} else {
+				lps[i] = 0; //if len is on zero cannot go backwards
+				i++;
+			}
+		}
+
+
+	}
+
+	return lps; //calculate max val from it
+//O(n)
+
+}
+
+//KMP--> to find count of pattern
+int KMP(vector<char>  &s, vector<char>  &pat) {
+	vector<char> temp = pat;		//temp = abc#abcabcabc
+
+	temp.push_back('#');   //# will ensure the LPS length does not exceed pattern length
+
+	for (auto ele : s) {
+		temp.push_back(ele);
+	}
+
+	string aux ;
+	for (auto c : temp ) {
+		aux.push_back(c);
+	}
+
+	std::vector<int> v = 	LPS(aux);
+	int cnt = 0;
+	for (auto x : v) {
+		if (x == pat.size()) cnt++;
+	}
+
+	return cnt;
+}
+
+vector<char> StringToVec (string s) {
+	std::vector<char> v;
+	for (auto c : s) {
+		v.push_back(c);
+	}
+	return v;
+}
+int main() {
+
+	vector<char> s = StringToVec("abcabcabc");
+	vector<char> pat = StringToVec("abc");
+	cout << KMP(s, pat) << " "; //3;
+	return 0;
+}
